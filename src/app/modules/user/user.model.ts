@@ -14,8 +14,6 @@ const userSchema = new Schema<Iuser>({
 
     password:{
         type:String,
-        required:true,
-        select:0
     },
     phone:{
         type:String

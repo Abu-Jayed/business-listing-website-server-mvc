@@ -11,7 +11,7 @@ import pick from "../../../shared/pick";
 const createUser = catchAsync(async (req: Request, res: Response) => {
     const userData = req.body;
     const result = await userService.createUser(userData);
-    const { password, ...others } = result.toObject();
+    const { ...others } = result.toObject();
     responseForData.sendResponseForCreate(res, {
       statusCode: httpStatus.OK,
       success: true,

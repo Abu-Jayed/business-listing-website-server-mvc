@@ -30,6 +30,7 @@ const userSchema = new Schema<Iuser>({
 
 })
 // has the password
+// assalam 
 userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(
       this.password,

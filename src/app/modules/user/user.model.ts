@@ -20,6 +20,9 @@ const userSchema = new Schema<Iuser>({
     phone:{
         type:String
     },
+    image:{
+        type:String
+    },
     role:{
         type:String,
         enum:['addmin','buyer','seller']

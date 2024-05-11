@@ -4,7 +4,7 @@ export type ILoginUser = {
 }
 export type ILoginUserResponse = {
     accessToken:string;
-    refreshToken:string
+    refreshToken?:string
 }
 export type IRefreshTokenResponse = {
     acceToken:string

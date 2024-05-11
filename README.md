@@ -1,1 +1,1 @@
-towsif
+towsif kire ki oboshta

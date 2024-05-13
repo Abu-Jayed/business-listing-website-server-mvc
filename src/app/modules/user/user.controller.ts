@@ -14,10 +14,9 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   responseForData.sendResponseForCreate(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User created Successful",
-    data: result,
+    message: 'User created Successful',
+  data:result
   });
-});
 //   get all user
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
   const paginationOption = pick(req.query, [

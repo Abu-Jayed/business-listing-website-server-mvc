@@ -1,60 +1,82 @@
 import { Request,Response } from "express";
 import catchAsync from "../../../shared/catchAsync";
-import { authService } from "./auth.service";
-import config from "../../../config";
-import { responseForData } from "../../../shared/sendRespons";
-import { ILoginUserResponse, IRefreshTokenResponse } from "./auth.interface";
+import {responseForData}from'../../../shared/sendRespons';
 import httpStatus from "http-status";
+import { Iuser } from "./user.interface";
+import { userService } from "./user.service";
+import pick from "../../../shared/pick";
 
-                                                                                                                                                                                       
-const loginUser = catchAsync(async (req: Request, res: Response) => {
-    const { ...loginData } = req.body;
-    const result = await authService.loginUser(loginData);
-    const { refreshToken, ...others } = result;
-  
-    //   set refresh token at browser cookie
-    const cookieOption = {
-      secure: config.env === 'production',
-      httpOnly: true,
-    };
-    res.cookie('refreshToken', refreshToken, cookieOption);
-  
-    if ('refreshToken' in result) {
-      delete result.refreshToken;
-    }
-  
-    responseForData.sendResponseForCreate<ILoginUserResponse>(res, {
+
+// create user
+const createUser = catchAsync(async (req: Request, res: Response) => {
+    const userData = req.body;
+    const result = await userService.createUser(userData);
+ 
+    responseForData.sendResponseForCreate(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'login Successful',
-      data: others,
+      message: 'User created Successful',
+    data:result
     });
   });
-  // refresh
-  const refreshToken = catchAsync(async (req: Request, res: Response) => {
-    const { refreshToken } = req.cookies;
-    const result = await authService.refreshToken(refreshToken);
-  
-    //   set refresh token at browser cookie
-    const cookieOption = {
-      secure: config.env === 'production',
-      httpOnly: true,
-    };
-  
-    res.cookie('refreshToken', refreshToken, cookieOption);
-  
-    responseForData.sendResponseForCreate<IRefreshTokenResponse>(res, {
+  //   get all user 
+const getAllUser = catchAsync(async(req:Request,res:Response)=>{
+    const paginationOption = pick(req.query,[
+        'limit',
+        'page',
+        'sortBy',
+        'sortOrder'
+    ])
+    const result = await userService.getAllUser(paginationOption);
+    responseForData.sendResponse<Iuser[]>(res,{
+        statusCode:httpStatus.OK,
+        success:true,
+        message:'Getting Successfull',
+        data:result.data,
+        meta:result.meta
+    })
+})
+// get single user
+const getSingleUser = catchAsync(async(req:Request,res:Response)=>{
+    const id = req.params.id;
+    const result = await userService.getSingleUser(id)
+    responseForData.sendResponseForCreate<Iuser>(res,{
+        statusCode:httpStatus.OK,
+        success:true,
+        message:'Getting succesfull',
+        data:result
+    })
+    
+})
+
+// update user 
+const updateUser = catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const travelData = req.body;
+    const result = await userService.updateUser(id, travelData);
+    responseForData.sendResponseForCreate<Iuser>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: '',
+      message: 'User data Update Successful',
       data: result,
     });
-    // next();
+  });
+  // delete user
+const deleteUser = catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const result = await userService.deleteUser(id);
+    responseForData.sendResponseForCreate(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: ' Delete Successful',
+      data: result,
+    });
   });
   
  
-  export const authController = {
-    loginUser,
-      refreshToken
-  };
-  
+  export const userController = {
+    createUser,
+    getAllUser,
+    getSingleUser,
+    updateUser,deleteUser
+  }
